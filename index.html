@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <canvas id='canvas' style='position:absolute; left:0px; top:0px; bottom:0px; right:0px; margin:auto;'></canvas>
+      <title>DCC104 - Exercicio 02 - Wallyce</title>
+    <script src="ImageLoader.js" charset="utf-8"></script>
+    <script src="AudioLoader.js" charset="utf-8"></script>
+    <script src="Sprite.js" charset="utf-8"></script>
+    <script src="Level.js" charset="utf-8"></script>
+  </head>
+  <body>
+
+    <canvas></canvas>
+    <script>
+      var eCanvas = document.getElementsByTagName("canvas")[0];
+      eCanvas.width = 800;
+      eCanvas.height = 600;
+      var ctx = eCanvas.getContext("2d");
+      var player = new Sprite();
+      player.x = 200;
+      player.y = 200;
+      player.width =  30;
+      player.height = 30;
+      var fps = 120;
+      var atual = new Date();
+      var anterior = new Date();
+      var dt = 1/fps;
+      var level = new Level();
+      var img = new Image();
+      img.src = "background.png";
+      var gameover = new Image();
+      gameover.src = "gameover.png";
+      loop();
+
+
+
+
+      function loop(){
+
+        requestAnimationFrame(loop);
+        if(player.vidas!=0){
+        atual = new Date();
+        dt = (atual - anterior)/1000;
+        ctx.clearRect(0,0,eCanvas.width, eCanvas.height);
+        ctx.drawImage(img,0,0, img.width, img.height, 0,0,800,600);
+        level.desenharVida(ctx, player);
+        level.randomicEnemy(dt);
+        player.desenha(ctx);
+        player.moverPlayer(dt);
+        level.desenhar(ctx);
+        level.mover(dt);
+        level.colidiuComPlayer(player);
+        level.colidiuComTiros(player);
+        player.cooldown -=dt;
+        anterior = atual;
+      }else{
+        ctx.clearRect(0,0,eCanvas.width, eCanvas.height);
+        ctx.drawImage(gameover,0,0, gameover.width, gameover.height, 0,0,800,600);
+      }
+
+      }
+
+
+      addEventListener("keydown", function(e){
+        switch (e.keyCode) {
+          case 32:
+          level.fire(player);
+
+          break;
+          case 37:
+          player.mvRight = false;
+          player.mvLeft = true;
+          player.mvUp = false;
+          player.mvDown = false;
+            break;
+          case 38:
+          player.mvRight = false;
+          player.mvLeft = false;
+          player.mvUp = true;
+          player.mvDown = false;
+            break;
+          case 39:
+          player.mvRight = true;
+          player.mvLeft = false;
+          player.mvUp = false;
+          player.mvDown = false;
+            break;
+          case 40:
+          player.mvRight = false;
+          player.mvLeft = false;
+          player.mvUp = false;
+          player.mvDown = true;
+            break;
+          default:
+
+        }
+      });
+
+
+      addEventListener("keyup", function(e){
+        switch (e.keyCode) {
+          case 37:
+             player.mvLeft = false;
+            break;
+          case 38:
+             player.mvUp = false;
+            break;
+          case 39:
+               player.mvRight = false;
+            break;
+          case 40:
+           player.mvDown = false;
+            break;
+          default:
+
+        }
+      });
+
+    </script>
+  </body>
+
+
+
+
+</html>
